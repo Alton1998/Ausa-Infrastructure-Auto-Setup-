@@ -41,18 +41,18 @@ resource "azurerm_cosmosdb_account" "ausa_cosmodb_account" {
   ]
 }
 
-resource "azurerm_cosmosdb_sql_database" "main" {
-  name                = "${random_pet.prefix.id}-cosmosdb-sqldb"
+resource "azurerm_cosmosdb_sql_database" "ausa_sql_database" {
+  name                = "ausa-cosmosdb-sqldb"
   resource_group_name = azurerm_resource_group.ausa_resource_group.name
-  account_name        = azurerm_cosmosdb_account.example.name
+  account_name        = azurerm_cosmosdb_account.ausa_cosmodb_account.name
   throughput          = var.throughput
 }
 
-resource "azurerm_cosmosdb_sql_container" "example" {
-  name                  = "${random_pet.prefix.id}-sql-container"
+resource "azurerm_cosmosdb_sql_container" "ausa_sql_container" {
+  name                  = "ausa-sql-container"
   resource_group_name   = azurerm_resource_group.ausa_resource_group.name
-  account_name          = azurerm_cosmosdb_account.example.name
-  database_name         = azurerm_cosmosdb_sql_database.main.name
+  account_name          = azurerm_cosmosdb_account.ausa_cosmodb_account.name
+  database_name         = azurerm_cosmosdb_sql_database.ausa_sql_database.name
   partition_key_paths    = ["/definition/id"]
   partition_key_version = 1
   throughput            = var.throughput

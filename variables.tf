@@ -1,7 +1,6 @@
 variable "prefix" {
   type        = string
-  default     = "cosmos-db-free-ti
-er"
+  default     = "cosmos-db-free-tier"
   description = "Prefix of the resource name"
 }
 
@@ -16,6 +15,7 @@ variable "cosmosdb_account_location" {
   default     = "eastus"
   description = "Cosmos db account location"
 }
+
 variable "throughput" {
   type        = number
   default     = 400

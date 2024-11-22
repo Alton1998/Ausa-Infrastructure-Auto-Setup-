@@ -10,7 +10,11 @@ terraform {
 
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
   subscription_id = "5601380b-51b8-4c08-9f8f-27fe215a2534"
 }
 
@@ -24,7 +28,7 @@ resource "azurerm_cosmosdb_account" "ausa_cosmodb_account" {
   location                  = var.cosmosdb_account_location
   resource_group_name       = azurerm_resource_group.ausa_resource_group.name
   offer_type                = "Standard"
-  kind                      = "MongoDB"
+  kind                      = "GlobalDocumentDB"
   automatic_failover_enabled = false
   free_tier_enabled          = true
   geo_location {
@@ -39,6 +43,15 @@ resource "azurerm_cosmosdb_account" "ausa_cosmodb_account" {
   depends_on = [
     azurerm_resource_group.ausa_resource_group
   ]
+  timeouts {
+    create = "30m"
+  }
+
+}
+
+resource "time_sleep" "wait_20_minutes" {
+  create_duration = "20m"
+  depends_on = [ azurerm_cosmosdb_account.ausa_cosmodb_account ]
 }
 
 resource "azurerm_cosmosdb_sql_database" "ausa_sql_database" {
@@ -46,6 +59,7 @@ resource "azurerm_cosmosdb_sql_database" "ausa_sql_database" {
   resource_group_name = azurerm_resource_group.ausa_resource_group.name
   account_name        = azurerm_cosmosdb_account.ausa_cosmodb_account.name
   throughput          = var.throughput
+  depends_on = [ time_sleep.wait_20_minutes ]
 }
 
 resource "azurerm_cosmosdb_sql_container" "ausa_sql_container" {
@@ -76,6 +90,7 @@ resource "azurerm_cosmosdb_sql_container" "ausa_sql_container" {
   unique_key {
     paths = ["/definition/idlong", "/definition/idshort"]
   }
+  depends_on = [ time_sleep.wait_20_minutes ]
 }
 
 resource "random_pet" "prefix" {

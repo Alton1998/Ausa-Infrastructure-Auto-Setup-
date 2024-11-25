@@ -15,7 +15,7 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
-  subscription_id = "5601380b-51b8-4c08-9f8f-27fe215a2534"
+  subscription_id = "baf6a519-d2be-40b5-9c0b-631284e13578"
 }
 
 resource "azurerm_resource_group" "ausa_resource_group" {
@@ -96,4 +96,10 @@ resource "azurerm_cosmosdb_sql_container" "ausa_sql_container" {
 resource "random_pet" "prefix" {
   prefix = var.prefix
   length = 1
+}
+
+resource "azurerm_communication_service" "ausa_communication_service" {
+  name                = "ausa-communicationservice"
+  resource_group_name = azurerm_resource_group.ausa_resource_group.name
+  data_location       = "United States"
 }
